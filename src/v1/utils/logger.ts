@@ -17,8 +17,6 @@ const myFormat = printf(({ level, message, label, timestamp }) => {
 
 addColors(colors);
 
-console.log(__dirname);
-
 const Logger = createLogger({
     format: combine(label({ label: "right meow!" }), timestamp(), myFormat),
 

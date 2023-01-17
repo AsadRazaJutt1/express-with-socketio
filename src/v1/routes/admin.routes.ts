@@ -2,8 +2,12 @@ import { Router, Request, Response } from "express";
 
 const router = Router();
 
+console.log("Admin API");
+
 router.get("/", (req: Request, res: Response) => {
     res.send({
-        message: `Welcome to the ${process.env.APP_NAME} API`,
+        message: `Admin API`,
     });
 });
+
+export { router };

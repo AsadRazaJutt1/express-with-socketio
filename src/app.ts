@@ -1,54 +1,50 @@
-import express, { Request, Response } from "express";
+import { HttpStatusCode } from "./v1/utils/constants";
+import express, {
+    Request,
+    Response,
+    json,
+    static as expressStatic,
+    urlencoded,
+} from "express";
 import cors from "cors";
 import compression from "compression";
 import { Server as HttpServer, createServer } from "http";
 import { Server as IoServer } from "socket.io";
-import { HttpStatusCode } from "./v1/utils/constants";
 import { Config } from "./v1/utils/config";
+import { join as pathJoin } from "path";
+import { router as apiRouter } from "./v1/routes";
+
+interface IAppListen {
+    server: HttpServer;
+    io: IoServer;
+}
 
 export class App {
     public app: express.Application;
-    public httpServer: HttpServer = {} as HttpServer;
-    public ioServer: IoServer = {} as IoServer;
+    public httpServer: HttpServer;
+    public ioServer: IoServer;
     constructor() {
-        this.app = express();
-
-        this.app.use(
-            cors({
-                origin: "*",
-            })
-        );
-
-        this.app.use(compression());
-
-        this.app.use(express.json({ limit: "10kb" }));
-        this.app.use(express.static(`./v1/storage/app/public`));
-
-        // support parsing of application/x-www-form-urlencoded post data
-        this.app.use(express.urlencoded({ extended: true }));
-
-        this.app.get("/api/v1/", (req: Request, res: Response) => {
-            res.send({
-                message: `Welcome to the ${process.env.APP_NAME} API`,
+        this.app = express()
+            .use(cors())
+            .use(json({ limit: "10kb" }))
+            .use(compression())
+            .use(expressStatic(pathJoin(`${__dirname}/../public`)))
+            .use(urlencoded({ extended: true }))
+            .use("/v1", apiRouter)
+            .all("/", (req: Request, res: Response) => {
+                const {
+                    HTTP_NOT_FOUND: { code, message },
+                } = HttpStatusCode;
+                res.status(code).send({
+                    message: `This Route Is ${message}`,
+                });
             });
-        });
-
-        this.app.all("*", (req: Request, res: Response) => {
-            const {
-                HTTP_NOT_FOUND: { code, message },
-            } = HttpStatusCode;
-            res.status(code).send({ message });
-        });
 
         this.httpServer = createServer(this.app);
-        this.ioServer = new IoServer(this.httpServer, {
-            cors: {
-                origin: "*",
-            },
-        });
+        this.ioServer = new IoServer(this.httpServer);
     }
 
-    public listen(): { server: HttpServer; io: IoServer } {
+    public listen(): IAppListen {
         const PORT = Config.port;
         const server = this.httpServer.listen(PORT);
         server.on("error", (error: any) => {

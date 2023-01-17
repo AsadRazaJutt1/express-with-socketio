@@ -1,20 +1,28 @@
+import dotenv from "dotenv";
+dotenv.config();
+
+function getValue<T>(key: string, defaultValue: T) {
+    const value = process.env[key];
+    return value ?? defaultValue;
+}
+
 export const Config = {
-    name: process.env.NAME ?? "API",
-    port: process.env.PORT ?? 3000,
-    env: process.env.NODE_ENV ?? "development",
+    appName: getValue("APP_NAME", "app"),
+    port: getValue("PORT", 3000),
+    env: getValue("NODE_ENV", "development"),
     db: {
-        host: process.env.DB_HOST ?? "localhost",
-        port: process.env.DB_PORT ?? "",
-        name: process.env.DB_NAME ?? "",
+        host: getValue("DB_HOST", "localhost"),
+        port: getValue("DB_PORT", 5432),
+        name: getValue("DB_NAME", "app"),
     },
     jwt: {
-        secret: process.env.JWT_SECRET ?? "secret",
-        expiresIn: process.env.JWT_EXPIRES_IN ?? "10m",
+        secret: getValue("JWT_SECRET", "secret"),
+        expiresIn: getValue("JWT_EXPIRES_IN", "15m"),
     },
     mail: {
-        host: process.env.MAIL_HOST ?? "smtp.mailtrap.io",
-        port: process.env.MAIL_PORT ?? 2525,
-        user: process.env.MAIL_USER ?? "user",
-        pass: process.env.MAIL_PASS ?? "",
+        host: getValue("MAIL_HOST", "smtp.mailtrap.io"),
+        port: getValue("MAIL_PORT", 2525),
+        user: getValue("MAIL_USER", "user"),
+        pass: getValue("MAIL_PASS", "pass"),
     },
 };
