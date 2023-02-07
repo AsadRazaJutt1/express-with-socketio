@@ -1,6 +1,6 @@
 import { Router, Request, Response } from "express";
 import { HttpStatusCode } from "../utils/constants";
-import { router as adminRouter } from "./admin.routes";
+import { router as adminRouter } from "./admin/index.routers";
 import { router as organizationRouter } from "./organization.routes";
 import { router as userRouter } from "./user.routes";
 
@@ -25,4 +25,4 @@ router.all("*", (req: Request, res: Response) => {
     });
 });
 
-export { router };
+export { router as apiRouter };

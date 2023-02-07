@@ -12,9 +12,9 @@ import { Server as HttpServer, createServer } from "http";
 import { Server as IoServer } from "socket.io";
 import { Config } from "./v1/utils/config";
 import { join as pathJoin } from "path";
-import { router as apiRouter } from "./v1/routes";
+import { apiRouter } from "./v1/routes";
 
-interface IAppListen {
+export interface AppListen {
     server: HttpServer;
     io: IoServer;
 }
@@ -44,7 +44,7 @@ export class App {
         this.ioServer = new IoServer(this.httpServer);
     }
 
-    public listen(): IAppListen {
+    public listen(): AppListen {
         const PORT = Config.port;
         const server = this.httpServer.listen(PORT);
         server.on("error", (error: any) => {

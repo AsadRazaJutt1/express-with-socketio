@@ -1,15 +1,15 @@
-import * as _ from "lodash";
+import { add } from "lodash";
 
-type IConstant = {
+type StatusCode = {
     code: number;
     message: string;
 };
 
-type IConstants = {
-    [key: string]: IConstant;
+type StatusCodes = {
+    [key: string]: StatusCode;
 };
 
-export const HttpStatusCode: IConstants = {
+export const HttpStatusCode: StatusCodes = {
     HTTP_CONTINUE: {
         code: 100,
         message: "Continue",

@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { HttpStatusCode } from "../utils/constants";
+import { HttpStatusCode } from "../../utils/constants";
 
 function index(req: Request, res: Response) {
     const {
